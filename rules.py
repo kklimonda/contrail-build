@@ -158,7 +158,11 @@ def setup_venv(env, target, venv_name, path=None):
         if ws_link: p = ws_link + "/build/" + env['OPT']
         else: p = env.Dir(env['TOP']).abspath
 
-    tdir = '/tmp/cache/%s/systemless_test' % os.environ['USER']
+    try:
+        user = os.environ['USER']
+    except KeyError:
+        user = 'unknown'
+    tdir = '/tmp/cache/%s/systemless_test' % user
     shell_cmd = ' && '.join ([
         'cd %s' % p,
         'mkdir %s' % tdir,
@@ -195,7 +199,11 @@ def venv_add_pip_pkg(env, v, pkg_list):
         if name[0] != '/':
             targets.append(name)
 
-    tdir = '/tmp/cache/%s/systemless_test' % os.environ['USER']
+    try:
+        user = os.environ['USER']
+    except KeyError:
+        user = 'unknown'
+    tdir = '/tmp/cache/%s/systemless_test' % user
     cmd = env.Command(targets, None, '/bin/bash -c "source %s/bin/activate; pip install --download-cache=%s %s"' %
                       (venv._path, tdir, ' '.join(pkg_list)))
     env.AlwaysBuild(cmd)
